@@ -7,4 +7,5 @@ train_transformed_dataset = Dataset_dict(root_dir=train_dict_root,root_dir1=trai
                                              start_freq=args.start_freq, end_freq=args.end_freq, which_freq=args.which_freq, failed_file=failed_file)
 
 ```
-## 接着直接运行 `python train_resnet50_500Hz.py`
+## 接着直接运行 `python train_resnet50_500Hz.py`(单卡运行）
+# 新增多卡并行训练，`python train_resnet50_500Hz_multi_card.py`
