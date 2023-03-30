@@ -3,7 +3,7 @@
 ### Main documents for testing  
 test_resnet50_500Hz.py  
   
-  The *.py is used to test, and it can test different frequency. You can run your own test by the Run Instructions.
+  The *.py is used to test newly generated data, and it can test different frequency. You can run your own test by the Run Instructions.
   
 ### Run Instructions   
 If you want to test the newly generated data, you should revise the following place:  
