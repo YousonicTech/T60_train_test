@@ -4,4 +4,4 @@ test_resnet50_500Hz_new：Used for newly generated data includes the data of yan
 test_resnet50_500Hz_old: Used for previously generated data
 
 ### Why split?  
-Because the structures of the new and previous data are different!!! The previous data has clean and new data has not.
+Because the structures of the new and previous data are different!!! The previous data has clean but new data has not.
