@@ -27,7 +27,7 @@ If you want to test the newly generated data, you should revise the following pl
     
    5、The val_dict_root and failed file should be modified to your own data path and you can revise the val_batch_size.  
    
-        if DEBUG == False:
+    if DEBUG == False:
         val_dict_root = "/Users/bajianxiang/Desktop/internship/filter_down_spec_dataset"
         val_batch_size = 1
         failed_file = "/Users/bajianxiang/Desktop/internship/filter_down_spec_dataset/koli-national-park-winter/koli-national-park-winter_koli_snow_site4_1way_bformat_1_koli-national-park-winter_东北话男声_1_TIMIT_a005_100_110_10dB-0.pt"
