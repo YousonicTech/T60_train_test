@@ -13,4 +13,4 @@ train_transformed_dataset = Dataset_dict(root_dir=train_dict_root,root_dir1=trai
 ```
 ## 接着直接运行 `python train_resnet50_500Hz.py`(单卡运行）
 ## 新增多卡并行训练，`python train_resnet50_500Hz_multi_card.py` 单进程、多线程
-# 新增多卡并行训练，`python train_resnet50_500Hz_multi_card_DDP.py` 多进程、多线程，更快更推荐，使用时记得更改数据集路径及选择频率
+# 新增多卡并行训练，`python train_resnet50_1000Hz_multi_card_DDP.py` 多进程、多线程，更快更推荐，使用时记得更改数据集路径及选择频率
