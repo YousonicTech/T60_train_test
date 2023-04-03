@@ -200,43 +200,12 @@ def train_net(start_epoch, n_epochs, train_loader, val_loader, batch_size, args)
             total_mean_bias = total_mean_bias + bias.item()
             total_mse_loss += mse_loss.item()
             total_ssim_loss += ssim_loss.item()
-        ##################################################
-        # print("-----------------------------------正在训练新数据------------------------------------")
-        # progress_bar0 = tqdm(train_loader0)
-        # for batch_i, datas in enumerate(progress_bar0):
-        #     # images_reshape = [batch, 3, 224, 224]
-        #     images_reshape = datas['image'].to(torch.float32).to(device)
-        #     gt_t60_reshape = datas['t60'].to(torch.float32).to(device).unsqueeze(1)
-        #     ######################################################
-        #     clean_reshape = datas['clean'].to(torch.float32).to(device)
-        #     ######################################################
-        #     # gt_t60_reshape / output_pts = [28, 1]
-        #     gt_t60_reshape = gt_t60_reshape.T[args.freq_loc].T  # [total_slices, 1]
-        #
-        #     output_pts, dereverb_out = net(images_reshape)  # [total_slice, 1], [total_slice, 3, 224, 224]
-        #
-        #     mse_loss = criterion(output_pts, gt_t60_reshape)
-        #
-        #     ssim_loss = (1 - ssim(dereverb_out, clean_reshape))
-        #
-        #     # loss = args.alpha * mse_loss + args.beta * ssim_loss
-        #     loss = awl(mse_loss, ssim_loss)
-        #     optimizer.zero_grad()
-        #     loss.backward()
-        #     torch.nn.utils.clip_grad_norm_(parameters=net.parameters(), max_norm=0.1, norm_type=2)
-        #
-        #     optimizer.step()
-        #     bias = torch.sum((gt_t60_reshape - output_pts)) / output_pts.shape[0]  # /sum(valid_len)
-        #     total_mean_loss = total_mean_loss + loss.item()
-        #     total_mean_bias = total_mean_bias + bias.item()
-        #     total_mse_loss += mse_loss.item()
-        #     total_ssim_loss += ssim_loss.item()
-        #####################################################
+
         mean_loss = total_mean_loss / len(train_loader)
         mean_bias = total_mean_bias / len(train_loader)
         mean_mse_loss = total_mse_loss / len(train_loader)
         mean_ssim_loss = total_ssim_loss / len(train_loader)
-        #######################################################
+
         writer.add_scalar('train/mean_loss', mean_loss, epoch)
         writer.add_scalar('train/mean_mse_loss', mean_mse_loss, epoch)
         writer.add_scalar('train/mean_ssim_loss', mean_ssim_loss, epoch)
@@ -414,8 +383,6 @@ if __name__ == "__main__":
                                                       find_unused_parameters=True)  # 这句加载到多GPU上
 
 
-
-    #######################加了train_loader0
     print("after train loader init")
     trained_epoch = args.trained_epoch
     train_net(trained_epoch, n_epochs, train_loader, val_loader, batch_size, args)
