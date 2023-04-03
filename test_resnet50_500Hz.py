@@ -54,10 +54,10 @@ def parse_args():
     # Test路径见下面 val_dict_root
     parser = argparse.ArgumentParser(description='Evaluate the mmTransformer')
     parser.add_argument('--trained_epoch', type=int, default=0)
-    parser.add_argument('--save_dir', type=str, default='save_model/0914_1000hz_fpn_lre5/')
+    parser.add_argument('--save_dir', type=str, default="/data2/pyq/yousonic/old_500hz/1001_autoLoss/save_model/")
     # parser.add_argument('--model_path', type=str, default='/Users/bajianxiang/Desktop/internship/new_dataset_t60_attention/save_model/resnet_1000Hz/t60_predict_model_0_fullT60_rir_timit_noise.pt')
-    parser.add_argument('--model_path', type=str, default='save_model/1001_autoLoss/')
-    parser.add_argument('--epoch_for_save', type=int, default=64)  # 记得改epoch数
+    parser.add_argument('--model_path', type=str, default="/data2/pyq/yousonic/old_500hz/1001_autoLoss/save_model/")
+    parser.add_argument('--epoch_for_save', type=int, default=56)  # 记得改epoch数
     parser.add_argument('--load_pretrain', type=bool, default=True)
     # 125Hz:(0, 7); 250Hz:(1, 10); 500Hz:(2, 13); 1kHz:(3, 16); 2kHz:(4, 19)
     parser.add_argument('--which_freq', type=int, default=2)   # 记得改成对应的图编号
@@ -66,7 +66,7 @@ def parse_args():
     parser.add_argument('--end_freq', type=int, default=29)
     parser.add_argument('--ln_out', type=int, default=1)
     parser.add_argument('--SERVER', type=bool, default=True)  # 在服务器上运行记得改成True
-    parser.add_argument('--outputresult_dir', type=str, default="./0921_test/epoch64") # 记得改输出路径，不用带/应该
+    parser.add_argument('--outputresult_dir', type=str, default="./0328_newmodel_yqhdata_500Hz/epoch56")  # 记得改输出路径，不用带/应该
 
     # parser.add_argument('--epoch',type = int,default = 170)
     args = parser.parse_args()
@@ -239,7 +239,7 @@ class StepLR:
 
         # self.lr_warmup = lambda epoch_in : min(self.lr)+0.5*(max(self.lr) - min(self.lr))*(1+np.cos((epoch_in-self.warmup_epochs)*PI/(2*self.warmup_epochs)))
         self.lr_warmup = lambda epoch_in: self.min_lr + 0.5 * (self.max_lr - self.min_lr) * (
-                1 + np.cos((epoch_in - self.warmup_epochs) * PI / (2 * self.warmup_epochs)))
+                1 + np.cos((epoch_in - self.warmup_epochs) * math.PI / (2 * self.warmup_epochs)))
         if self.warmup == True:
             self.lr_epochs = [self.warmup_epochs] + [i + self.warmup_epochs for i in lr_epochs]
             self.lr = [self.lr_warmup] + lr
@@ -327,7 +327,7 @@ if __name__ == "__main__":
 
     model_path = args.model_path + 't60_predict_model_' + str(args.epoch_for_save) + '_fullT60_rir_timit_noise.pt'
     net = FPN(num_blocks=[2, 4, 23, 3], num_classes=3, back_bone="resnet50", pretrained=False)
-
+    net = nn.DataParallel(net)
     if LOAD_PRETRAIN == True:
         start_time = time.time()
         net, trained_epoch = load_checkpoint(model_path, 99, net, device)
@@ -361,12 +361,13 @@ if __name__ == "__main__":
         val_batch_size = 3
         failed_file = "/Users/bajianxiang/Desktop/internship/filter_down_spec_dataset/koli-national-park-winter/koli-national-park-winter_koli_snow_site4_1way_bformat_1_koli-national-park-winter_东北话男声_1_TIMIT_a005_100_110_10dB-0.pt"
     else:
-        #val_dict_root = "/data/xbj/0927_500hz_with_clean/val"
-        val_dict_root = "/data2/hsl/pt_generate/0320_yanqihu_500hz/train"
-        failed_file = "/data2/hsl/pt_generate/0320_yanqihu_500hz/train/20230218094545-0.pt"
-        #failed_file = "/data/xbj/0927_500hz_with_clean/val/hoffmann-lime-kiln-langcliffeuk/hoffmann-lime-kiln-langcliffeuk_ir_p2_0_1_hoffmann-lime-kiln-langcliffeuk_东北话男声_1_TIMIT_a053_110_120_10dB-0.pt"
+        val_dict_root = "/data/xbj/0927_500hz_with_clean/val"
+        failed_file = "/data/xbj/0927_500hz_with_clean/val/hoffmann-lime-kiln-langcliffeuk/hoffmann-lime-kiln-langcliffeuk_ir_p2_0_1_hoffmann-lime-kiln-langcliffeuk_东北话男声_1_TIMIT_a053_110_120_10dB-0.pt"
         val_batch_size = 6
         #failed_file = "/data/xbj/0902_1000hz_with_clean/val/creswell-crags/creswell-crags_1_s_mainlevel_r_mainlevel2_1_creswell-crags_东北话男声_1_TIMIT_a098_290_300_20dB-0.pt"
+        # val_dict_root = "/data/hsl/0324_pt_with_clean/Cas-YanXiHu/"
+        # failed_file = "/data/hsl/0324_pt_with_clean/Cas-YanXiHu/Cas-YanXiHu_215-first-dot_Cas-YanXiHu_长沙话男声_1_TIMIT_a005_0_10_0dB-0.pt"
+        # val_batch_size = 6
 
 
     val_transformed_dataset = Dataset_dict(root_dir=val_dict_root, transform=data_transform, start_freq=args.start_freq,
@@ -381,9 +382,13 @@ if __name__ == "__main__":
                                                  batch_size=val_batch_size, drop_last=True,
                                                  collate_fn=collate_fn)
     else:
+        # val_loader = torch.utils.data.DataLoader(val_transformed_dataset,
+        #                                          shuffle=True, num_workers=4,
+        #                                          batch_size=val_batch_size, drop_last=True, prefetch_factor=100,
+        #                                          collate_fn=collate_fn)
         val_loader = torch.utils.data.DataLoader(val_transformed_dataset,
-                                                 shuffle=True, num_workers=4,
-                                                 batch_size=val_batch_size, drop_last=True, prefetch_factor=100,
+                                                 shuffle=True, num_workers=0,
+                                                 batch_size=val_batch_size, drop_last=True,
                                                  collate_fn=collate_fn)
     print("after train loader init")
     trained_epoch = args.trained_epoch
@@ -403,4 +408,3 @@ if __name__ == "__main__":
     get_boxplot(test_res=test_output_result)
     save_path = outputresult_dir + '/' + str(args.epoch_for_save) + '.pt'
     torch.save(test_output_result, save_path)
-
