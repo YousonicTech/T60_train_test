@@ -24,6 +24,9 @@ train_transformed_dataset = Dataset_dict(root_dir=train_dict_root,root_dir1=trai
 ## 4.多卡并行训练，多进程、多线程（推荐）
 `python -m torch.distributed.launch --nnodes=1 --nproc_per_node=3 train_resnet50_1000Hz_multi_card_DDP.py`
 其中nnodes为机器数，不用改，nproc_per_node为显卡数，更快更推荐，使用时记得更改数据集路径及选择频率，步骤与上面一样
+# --------------训练部分补充--------------  
+train_resnet50_1000Hz_multi_card_DDP_fixed.py 修补了train_resnet50_1000Hz_multi_card_DDP.py运行的一些问题，在运行程序时，采用train_resnet50_1000Hz_multi_card_DDP_fixed.py  
+new_data_load_original_fixed.py 修补了new_data_load_original.py运行的一些问题，在运行程序时，采用new_data_load_original_fixed.py
 
 
 
