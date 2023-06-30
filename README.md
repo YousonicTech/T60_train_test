@@ -31,6 +31,9 @@ new_data_load_original_fixed.py 修补了new_data_load_original.py运行的一�
 
 
 # -------------测试部分------------
+## 230630新增：auto_test.py
+可以批量测试，比较简单，详见代码
+
 # T60_train_test/test_resnet50_500Hz_old  
 ## Code Description  
 ### Main documents for testing  
